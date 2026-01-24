@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Image Converter</title>
+    <style>
+        :root {
+            /* Light Mode Variables */
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --accent-gradient: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+            --text-color: #4a4a4a;
+            --text-muted: #7a7a7a;
+            --card-bg: rgba(255, 255, 255, 0.5);
+            --accent: #ff6b6b;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --radius: 24px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Dark Mode Variables */
+                --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+                --accent-gradient: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+                --glass-bg: rgba(20, 20, 20, 0.6);
+                --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+                --text-color: #e0e0e0;
+                --text-muted: #a0a0a0;
+                --card-bg: rgba(20, 20, 20, 0.6); /* Made this darker for better contrast */
+                --accent: #4facfe;
+                --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout Structure */
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 1rem;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        /* Header / Hero Section */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            border: var(--glass-border);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Tool Section */
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: var(--glass-bg);
+            border-radius: 50px; /* Pill shape */
+            border: var(--glass-border);
+            backdrop-filter: blur(16px);
+            box-shadow: var(--shadow);
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        select, button {
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        /* Specific fix for select in dark mode */
+        @media (prefers-color-scheme: dark) {
+            select {
+                background-color: rgba(30, 30, 30, 0.8);
+                color: #ffffff;
+            }
+            select option {
+                background-color: #1a1a1a;
+                color: #ffffff;
+            }
+        }
+
+        /* Custom Dropdown Arrow Fix */
+        select {
+            appearance: none;
+            padding-right: 40px;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%237a7a7a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 12px auto;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            select {
+                background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e0e0e0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            }
+        }
+
+        button:hover, select:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent);
+        }
+
+        .primary-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .primary-btn {
+                color: #1a1a1a;
+            }
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            width: 100%;
+            min-height: 300px;
+            background: var(--glass-bg);
+            border: 3px dashed var(--text-muted);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.005);
+        }
+
+        .drop-zone-content {
+            text-align: center;
+            pointer-events: none;
+            padding: 20px;
+        }
+
+        .drop-zone svg {
+            width: 64px;
+            height: 64px;
+            fill: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .drop-zone h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .drop-zone p {
+            color: var(--text-muted);
+        }
+
+        #fileInput {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Results Grid */
+        .results-section {
+            margin-top: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .image-card {
+            background: var(--glass-bg);
+            border: var(--glass-border);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s ease;
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .preview-wrapper {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer; /* Indicates clickable */
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .card-info {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .action-buttons {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-btn, .copy-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .download-btn:hover, .copy-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        
+        /* Specific styling for Copy button to make it distinct but secondary or similar */
+        .copy-btn {
+            border-color: var(--text-muted);
+            color: var(--text-color);
+        }
+
+        .copy-btn:hover {
+            background: var(--text-muted);
+            color: #fff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .download-btn:hover, .copy-btn:hover {
+                color: #1a1a1a;
+            }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding-bottom: 20px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            
+            .controls-panel {
+                width: 100%;
+                flex-direction: column;
+                border-radius: 24px;
+            }
+
+            select, button {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .drop-zone {
+                min-height: 200px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr; /* Stack cards on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+        
+        <!-- Navigation -->
+        <nav>
+            <a href="#" onclick="history.back(); return false;" class="back-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Go Back
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Image Converter</h1>
+            <p class="subtitle">
+                Effortlessly transform your images directly in your browser. 
+                Private, secure, and fast. Drag, drop, and convert 
+                to PNG, JPEG, or WebP in seconds.
+            </p>
+        </header>
+
+        <main>
+            <!-- Controls -->
+            <div class="controls-panel">
+                <select id="formatSelect">
+                    <option value="image/png">Convert to PNG</option>
+                    <option value="image/jpeg">Convert to JPEG</option>
+                    <option value="image/webp">Convert to WebP</option>
+                </select>
+                <button id="downloadAllBtn" class="primary-btn" style="display: none;">Download All</button>
+                <button onclick="clearAll()" id="clearBtn" style="display: none;">Clear Gallery</button>
+            </div>
+
+            <!-- Drop Zone -->
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-content">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                    </svg>
+                    <h3>Drag & Drop Images</h3>
+                    <p>or tap anywhere to browse files</p>
+                </div>
+                <input type="file" id="fileInput" multiple accept="image/*">
+            </div>
+
+            <!-- Results -->
+            <div class="results-section">
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Cards injected here -->
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Runs locally in your browser. No data is uploaded to any server. ✨</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const formatSelect = document.getElementById('formatSelect');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        let convertedFiles = [];
+
+        // Handle File Selection
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            fileInput.value = ''; 
+        });
+
+        // Drag & Drop Events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Main Processing Function
+        function handleFiles(files) {
+            const targetFormat = formatSelect.value;
+            
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        convertImage(img, file.name, targetFormat);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function convertImage(img, originalName, format) {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            
+            // Handle Transparency for JPEG
+            if (format === 'image/jpeg') {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            ctx.drawImage(img, 0, 0);
+
+            // Convert
+            const dataUrl = canvas.toDataURL(format, 0.9); // 90% Quality
+            const ext = format.split('/')[1];
+            const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
+            const newName = `${nameWithoutExt}.${ext}`;
+
+            addToGallery(dataUrl, newName);
+        }
+
+        function addToGallery(url, filename) {
+            convertedFiles.push({ url, filename });
+
+            // Show controls
+            downloadAllBtn.style.display = 'block';
+            clearBtn.style.display = 'block';
+
+            // Create Card
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            
+            // Preview Wrapper with Double Click event
+            const previewWrapper = document.createElement('div');
+            previewWrapper.className = 'preview-wrapper';
+            previewWrapper.title = "Double click to open in new tab";
+            previewWrapper.ondblclick = () => {
+                window.open(url, '_blank');
+            };
+
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'preview-img';
+            
+            previewWrapper.appendChild(img);
+
+            // Info
+            const info = document.createElement('div');
+            info.className = 'card-info';
+            info.innerText = filename;
+            info.title = filename; 
+
+            // Action Buttons Wrapper
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'action-buttons';
+
+            // Download Button
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'download-btn';
+            downloadBtn.innerText = 'Download';
+            downloadBtn.onclick = () => {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            // Copy Button
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerText = 'Copy';
+            copyBtn.onclick = async () => {
+                try {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            [blob.type]: blob
+                        })
+                    ]);
+                    // Visual feedback
+                    const originalText = copyBtn.innerText;
+                    copyBtn.innerText = "Copied!";
+                    copyBtn.style.background = "var(--text-muted)";
+                    copyBtn.style.color = "#fff";
+                    setTimeout(() => {
+                        copyBtn.innerText = originalText;
+                        copyBtn.style.background = "";
+                        copyBtn.style.color = "";
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                    copyBtn.innerText = "Error";
+                    setTimeout(() => copyBtn.innerText = "Copy", 2000);
+                }
+            };
+
+            actionsDiv.appendChild(downloadBtn);
+            actionsDiv.appendChild(copyBtn);
+
+            card.appendChild(previewWrapper);
+            card.appendChild(info);
+            card.appendChild(actionsDiv);
+            
+            // Prepend so newest is first
+            resultsGrid.insertBefore(card, resultsGrid.firstChild);
+        }
+
+        // Download All
+        downloadAllBtn.addEventListener('click', () => {
+            if(convertedFiles.length === 0) return;
+            
+            let delay = 0;
+            convertedFiles.forEach(file => {
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.href = file.url;
+                    link.download = file.filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }, delay);
+                delay += 350; // Slight delay to prevent browser blocking
+            });
+        });
+
+        function clearAll() {
+            resultsGrid.innerHTML = '';
+            convertedFiles = [];
+            downloadAllBtn.style.display = 'none';
+            clearBtn.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
