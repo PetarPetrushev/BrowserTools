@@ -544,10 +544,6 @@
             // Preview Wrapper with Double Click event
             const previewWrapper = document.createElement('div');
             previewWrapper.className = 'preview-wrapper';
-            previewWrapper.title = "Double click to open in new tab";
-            previewWrapper.ondblclick = () => {
-                window.open(url, '_blank');
-            };
 
             const img = document.createElement('img');
             img.src = url;
