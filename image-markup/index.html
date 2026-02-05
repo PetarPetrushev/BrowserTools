@@ -255,19 +255,26 @@
                         ctx.ellipse(el.x + el.w/2, el.y + el.h/2, Math.abs(el.w)/2, Math.abs(el.h)/2, 0, 0, 2*Math.PI);
                         ctx.stroke();
                     } else if (el.type === 'arrow') {
+                        const sx = el.sx ?? 0;
+                        const sy = el.sy ?? 0;
+                        const startX = el.x + sx * el.w;
+                        const startY = el.y + sy * el.h;
+                        const endX = el.x + (1-sx) * el.w;
+                        const endY = el.y + (1-sy) * el.h;
+                        
                         const head = el.style.width * 3;
-                        const ex = el.x + el.w;
-                        const ey = el.y + el.h;
-                        const angle = Math.atan2(ey - el.y, ex - el.x);
+                        const angle = Math.atan2(endY - startY, endX - startX);
+                        
                         ctx.beginPath();
-                        ctx.moveTo(el.x, el.y);
-                        ctx.lineTo(ex, ey);
+                        ctx.moveTo(startX, startY);
+                        ctx.lineTo(endX, endY);
                         ctx.stroke();
+                        
                         ctx.beginPath();
-                        ctx.moveTo(ex, ey);
-                        ctx.lineTo(ex - head * Math.cos(angle - Math.PI/6), ey - head * Math.sin(angle - Math.PI/6));
-                        ctx.moveTo(ex, ey);
-                        ctx.lineTo(ex - head * Math.cos(angle + Math.PI/6), ey - head * Math.sin(angle + Math.PI/6));
+                        ctx.moveTo(endX, endY);
+                        ctx.lineTo(endX - head * Math.cos(angle - Math.PI/6), endY - head * Math.sin(angle - Math.PI/6));
+                        ctx.moveTo(endX, endY);
+                        ctx.lineTo(endX - head * Math.cos(angle + Math.PI/6), endY - head * Math.sin(angle + Math.PI/6));
                         ctx.stroke();
                     } else if (el.type === 'text') {
                         ctx.font = `${el.style.bold ? 'bold' : ''} ${el.style.fontSize}px ${el.style.fontFamily}`;
@@ -477,8 +484,16 @@
                         if (handle.includes('t')) { newY = startDims.y + rdy; newH = startDims.h - rdy; }
 
                         // Prevent negative flip
-                        if (newW < 0) { newX += newW; newW = Math.abs(newW); }
-                        if (newH < 0) { newY += newH; newH = Math.abs(newH); }
+                        if (newW < 0) { 
+                            newX += newW; 
+                            newW = Math.abs(newW);
+                            if(el.type === 'arrow') el.sx = 1 - (el.sx || 0); 
+                        }
+                        if (newH < 0) { 
+                            newY += newH; 
+                            newH = Math.abs(newH); 
+                            if(el.type === 'arrow') el.sy = 1 - (el.sy || 0);
+                        }
 
                         el.x = newX; el.y = newY; el.w = newW; el.h = newH;
 
@@ -617,6 +632,12 @@
                         let finalW = w;
                         let finalH = h;
                         
+                        let sx = 0, sy = 0;
+                        if (tool === 'arrow') {
+                             if (finalW < 0) sx = 1;
+                             if (finalH < 0) sy = 1;
+                        }
+
                         if (finalW < 0) { finalX += finalW; finalW = Math.abs(finalW); }
                         if (finalH < 0) { finalY += finalH; finalH = Math.abs(finalH); }
 
@@ -625,7 +646,8 @@
                             type: tool,
                             x: finalX, y: finalY, w: finalW, h: finalH,
                             style: { color, width },
-                            rotation: 0
+                            rotation: 0,
+                            sx, sy
                         };
                         pushHistory(baseImage, [...elements, newEl]);
                     }
