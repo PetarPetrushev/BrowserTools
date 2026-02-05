@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quick MarkUp v3.1 ✨</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'media', 
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        'primary-hover': '#2563eb',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                        mono: ['Fira Code', 'monospace'],
+                        cursive: ['Pacifico', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Fira+Code&family=Pacifico&display=swap');
+        
+        body {
+            margin: 0;
+            overflow: hidden;
+            touch-action: none;
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+        }
+
+        .checkboard {
+            background-color: white;
+            background-image: 
+                linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
+                linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e5e7eb;
+            border-radius: 2px;
+        }
+        @media (prefers-color-scheme: dark) {
+            input[type=range]::-webkit-slider-runnable-track {
+                background: #4b5563;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-zinc-900 dark:text-gray-100 transition-colors duration-200">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // --- Icons ---
+        const Icons = {
+            Select: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>,
+            Pen: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>,
+            Square: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>,
+            Circle: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>,
+            Arrow: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>,
+            Text: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>,
+            Blur: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/><path d="M22 13c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/><path d="M13 13c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/><path d="M8.5 19c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/><path d="M22 7c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/><path d="M13 7c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/><path d="M4 13c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/><path d="M4 7c0-1.7-1.3-3-3-3s-3 1.3-3 3 1.3 3 3 3 3-1.3 3-3z"/></svg>,
+            Pixel: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>,
+            Undo: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>,
+            Redo: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path></svg>,
+            Download: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>,
+            Copy: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>,
+            Image: () => <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>,
+            Bold: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"></path></svg>,
+            ChevronDown: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>,
+            ChevronUp: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>,
+            Rotate: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.69-6.39"/><polyline points="21 5 21 12 13.9 12"/></svg>
+        };
+
+        const Fonts = [
+            { name: 'Sans', val: 'Inter, sans-serif' },
+            { name: 'Serif', val: 'Merriweather, serif' },
+            { name: 'Mono', val: 'Fira Code, monospace' },
+            { name: 'Fun', val: 'Pacifico, cursive' },
+        ];
+
+        // --- Math Helpers ---
+        const dist = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+        // AABB check is not enough for rotated items. We use a transformation check.
+        const isPointInElement = (p, el) => {
+            const cx = el.x + el.w/2;
+            const cy = el.y + el.h/2;
+            // Rotate point around center by -rotation to align with AABB
+            const rad = -(el.rotation || 0) * (Math.PI / 180);
+            const nx = Math.cos(rad) * (p.x - cx) - Math.sin(rad) * (p.y - cy) + cx;
+            const ny = Math.sin(rad) * (p.x - cx) + Math.cos(rad) * (p.y - cy) + cy;
+            return nx >= el.x && nx <= el.x + el.w && ny >= el.y && ny <= el.y + el.h;
+        };
+
+        const rotatePoint = (p, center, angle) => {
+             const rad = angle * (Math.PI / 180);
+             return {
+                 x: Math.cos(rad) * (p.x - center.x) - Math.sin(rad) * (p.y - center.y) + center.x,
+                 y: Math.sin(rad) * (p.x - center.x) + Math.cos(rad) * (p.y - center.y) + center.y
+             };
+        };
+
+        const App = () => {
+            // --- State ---
+            const [baseImage, setBaseImage] = useState(null);
+            const [elements, setElements] = useState([]);
+            const [selectedId, setSelectedId] = useState(null);
+            const [history, setHistory] = useState([]);
+            const [historyIndex, setHistoryIndex] = useState(-1);
+
+            const [tool, setTool] = useState('select');
+            const [color, setColor] = useState('#ef4444');
+            const [width, setWidth] = useState(4);
+            const [isBold, setIsBold] = useState(false);
+            const [fontFamily, setFontFamily] = useState(Fonts[0].val);
+
+            const [filters, setFilters] = useState({ brightness: 100, contrast: 100, saturate: 100, hue: 0 });
+            const [isMenuOpen, setIsMenuOpen] = useState(true);
+            const [toast, setToast] = useState(null);
+            const [textInput, setTextInput] = useState(null);
+
+            const canvasRef = useRef(null);
+            const containerRef = useRef(null);
+            const isDragging = useRef(false);
+            const dragStart = useRef({ x: 0, y: 0 });
+            const dragTarget = useRef(null); 
+            const copyTimeout = useRef(null);
+            const currentPath = useRef([]);
+
+            // --- Initialization ---
+
+            const initCanvas = (img) => {
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const MAX_W = 1920; const MAX_H = 1080;
+                let w = img.width; let h = img.height;
+                if (w > MAX_W || h > MAX_H) {
+                    const ratio = Math.min(MAX_W/w, MAX_H/h);
+                    w *= ratio; h *= ratio;
+                }
+                canvas.width = w; canvas.height = h;
+                ctx.drawImage(img, 0, 0, w, h);
+                const initialData = ctx.getImageData(0, 0, w, h);
+                setBaseImage(initialData);
+                setElements([]);
+                pushHistory(initialData, []);
+                showToast("Ready! Try the Select tool to move stuff! 🖱️");
+            };
+
+            const pushHistory = (rasterData, elems) => {
+                const newHist = history.slice(0, historyIndex + 1);
+                const elemsCopy = JSON.parse(JSON.stringify(elems));
+                newHist.push({ raster: rasterData, elements: elemsCopy });
+                setHistory(newHist);
+                setHistoryIndex(newHist.length - 1);
+                setBaseImage(rasterData);
+                setElements(elems);
+                triggerAutoCopy();
+            };
+
+            const undo = () => {
+                if (historyIndex > 0) {
+                    const idx = historyIndex - 1;
+                    setHistoryIndex(idx);
+                    setBaseImage(history[idx].raster);
+                    setElements(JSON.parse(JSON.stringify(history[idx].elements)));
+                    setSelectedId(null);
+                }
+            };
+
+            const redo = () => {
+                if (historyIndex < history.length - 1) {
+                    const idx = historyIndex + 1;
+                    setHistoryIndex(idx);
+                    setBaseImage(history[idx].raster);
+                    setElements(JSON.parse(JSON.stringify(history[idx].elements)));
+                    setSelectedId(null);
+                }
+            };
+
+            // --- Rendering ---
+
+            const redraw = () => {
+                const canvas = canvasRef.current;
+                if (!canvas || !baseImage) return;
+                const ctx = canvas.getContext('2d');
+
+                ctx.putImageData(baseImage, 0, 0);
+
+                elements.forEach(el => {
+                    ctx.save();
+                    // Rotate context around element center
+                    const cx = el.x + el.w/2;
+                    const cy = el.y + el.h/2;
+                    ctx.translate(cx, cy);
+                    ctx.rotate((el.rotation || 0) * Math.PI / 180);
+                    ctx.translate(-cx, -cy);
+
+                    ctx.lineWidth = el.style.width;
+                    ctx.strokeStyle = el.style.color;
+                    ctx.fillStyle = el.style.color;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    if (el.type === 'pen') {
+                        ctx.beginPath();
+                        if (el.points.length > 0) {
+                            ctx.moveTo(el.points[0].x, el.points[0].y);
+                            for (let i = 1; i < el.points.length; i++) ctx.lineTo(el.points[i].x, el.points[i].y);
+                            ctx.stroke();
+                        }
+                    } else if (el.type === 'rect') {
+                        ctx.strokeRect(el.x, el.y, el.w, el.h);
+                    } else if (el.type === 'circle') {
+                        ctx.beginPath();
+                        ctx.ellipse(el.x + el.w/2, el.y + el.h/2, Math.abs(el.w)/2, Math.abs(el.h)/2, 0, 0, 2*Math.PI);
+                        ctx.stroke();
+                    } else if (el.type === 'arrow') {
+                        const head = el.style.width * 3;
+                        const ex = el.x + el.w;
+                        const ey = el.y + el.h;
+                        const angle = Math.atan2(ey - el.y, ex - el.x);
+                        ctx.beginPath();
+                        ctx.moveTo(el.x, el.y);
+                        ctx.lineTo(ex, ey);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(ex, ey);
+                        ctx.lineTo(ex - head * Math.cos(angle - Math.PI/6), ey - head * Math.sin(angle - Math.PI/6));
+                        ctx.moveTo(ex, ey);
+                        ctx.lineTo(ex - head * Math.cos(angle + Math.PI/6), ey - head * Math.sin(angle + Math.PI/6));
+                        ctx.stroke();
+                    } else if (el.type === 'text') {
+                        ctx.font = `${el.style.bold ? 'bold' : ''} ${el.style.fontSize}px ${el.style.fontFamily}`;
+                        ctx.textBaseline = 'top';
+                        const lines = el.text.split('\n');
+                        const lineHeight = el.style.fontSize * 1.2;
+                        lines.forEach((line, i) => {
+                            ctx.fillText(line, el.x, el.y + (i * lineHeight));
+                        });
+                    }
+                    ctx.restore();
+                });
+
+                if (selectedId) {
+                    const el = elements.find(e => e.id === selectedId);
+                    if (el) {
+                        ctx.save();
+                        const cx = el.x + el.w/2;
+                        const cy = el.y + el.h/2;
+                        ctx.translate(cx, cy);
+                        ctx.rotate((el.rotation || 0) * Math.PI / 180);
+                        ctx.translate(-cx, -cy);
+
+                        ctx.strokeStyle = '#3b82f6';
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([5, 5]);
+                        ctx.strokeRect(el.x - 5, el.y - 5, el.w + 10, el.h + 10);
+                        
+                        ctx.setLineDash([]);
+                        ctx.fillStyle = 'white';
+                        
+                        // Resize Handles
+                        const handles = [
+                            {x: el.x-5, y: el.y-5}, {x: el.x+el.w+5, y: el.y-5},
+                            {x: el.x+el.w+5, y: el.y+el.h+5}, {x: el.x-5, y: el.y+el.h+5}
+                        ];
+                        handles.forEach(h => {
+                            ctx.fillRect(h.x - 5, h.y - 5, 10, 10);
+                            ctx.strokeRect(h.x - 5, h.y - 5, 10, 10);
+                        });
+
+                        // Rotate Handle (Top Center)
+                        ctx.beginPath();
+                        ctx.moveTo(el.x + el.w/2, el.y - 5);
+                        ctx.lineTo(el.x + el.w/2, el.y - 25);
+                        ctx.stroke();
+                        ctx.fillStyle = '#3b82f6';
+                        ctx.beginPath();
+                        ctx.arc(el.x + el.w/2, el.y - 25, 6, 0, Math.PI*2);
+                        ctx.fill();
+                        ctx.stroke();
+
+                        ctx.restore();
+                    }
+                }
+            };
+
+            useEffect(() => redraw(), [baseImage, elements, selectedId]);
+
+            // --- Interaction Logic ---
+
+            const getCoords = (e) => {
+                const canvas = canvasRef.current;
+                const rect = canvas.getBoundingClientRect();
+                let clientX = e.clientX, clientY = e.clientY;
+                if (e.touches && e.touches.length > 0) {
+                    clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
+                } else if (e.changedTouches && e.changedTouches.length > 0) {
+                    clientX = e.changedTouches[0].clientX; clientY = e.changedTouches[0].clientY;
+                }
+                return {
+                    x: (clientX - rect.left) * (canvas.width / rect.width),
+                    y: (clientY - rect.top) * (canvas.height / rect.height)
+                };
+            };
+
+            const handlePointerDown = (e) => {
+                if (!baseImage) return;
+                const pos = getCoords(e);
+                isDragging.current = true;
+                dragStart.current = pos;
+
+                if (tool === 'select') {
+                    if (selectedId) {
+                        const el = elements.find(e => e.id === selectedId);
+                        // We must transform mouse point into element's local un-rotated space to check handles easily
+                        // Or transform handles to world space. 
+                        // Let's use rotated points for handles since there are few.
+                        
+                        const cx = el.x + el.w/2;
+                        const cy = el.y + el.h/2;
+                        const angle = (el.rotation || 0);
+
+                        // Rotation Handle Check
+                        const rotHandleBase = { x: cx, y: el.y - 25 };
+                        const rotHandlePos = rotatePoint(rotHandleBase, {x: cx, y: cy}, angle);
+                        if (dist(pos, rotHandlePos) < 20) {
+                            dragTarget.current = { type: 'rotate', id: selectedId, startAngle: angle, center: {x: cx, y: cy} };
+                            return;
+                        }
+
+                        // Resize Handles Check
+                        const bx = el.x - 5, by = el.y - 5, bw = el.w + 10, bh = el.h + 10;
+                        const rawHandles = [
+                            {pos: 'tl', x: bx, y: by}, {pos: 'tr', x: bx+bw, y: by},
+                            {pos: 'br', x: bx+bw, y: by+bh}, {pos: 'bl', x: bx, y: by+bh}
+                        ];
+                        const handles = rawHandles.map(h => ({
+                            ...h,
+                            pt: rotatePoint(h, {x: cx, y: cy}, angle)
+                        }));
+
+                        const clickedHandle = handles.find(h => dist(pos, h.pt) < 25); // Bigger hit area
+                        if (clickedHandle) {
+                            dragTarget.current = { type: 'handle', id: selectedId, handle: clickedHandle.pos, startDims: {...el} };
+                            return;
+                        }
+                    }
+
+                    // Select Element Loop
+                    for (let i = elements.length - 1; i >= 0; i--) {
+                        const el = elements[i];
+                        if (isPointInElement(pos, el)) {
+                            setSelectedId(el.id);
+                            dragTarget.current = { type: 'element', id: el.id, startPos: {x: el.x, y: el.y} };
+                            if (el.type === 'text') {
+                                setColor(el.style.color);
+                                setWidth(el.style.fontSize / 5);
+                                setIsBold(el.style.bold);
+                                setFontFamily(el.style.fontFamily);
+                            }
+                            return;
+                        }
+                    }
+                    setSelectedId(null);
+                    dragTarget.current = null;
+                } else if (tool === 'text') {
+                    e.preventDefault();
+                    const hitText = elements.find(el => el.type === 'text' && isPointInElement(pos, el));
+                    if (hitText) {
+                        startTextEdit(hitText, e.clientX, e.clientY);
+                        return;
+                    }
+                    startTextEdit(null, e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY, pos);
+                } else if (tool === 'pen') {
+                    currentPath.current = [pos];
+                }
+            };
+
+            const handlePointerMove = (e) => {
+                if (!isDragging.current) return;
+                e.preventDefault();
+                const pos = getCoords(e);
+                const dx = pos.x - dragStart.current.x;
+                const dy = pos.y - dragStart.current.y;
+
+                if (tool === 'select' && dragTarget.current) {
+                    const { type, id, startPos, handle, startDims, startAngle, center } = dragTarget.current;
+                    const newElements = [...elements];
+                    const idx = newElements.findIndex(el => el.id === id);
+                    if (idx === -1) return;
+                    const el = {...newElements[idx]};
+
+                    if (type === 'element') {
+                        el.x = startPos.x + dx;
+                        el.y = startPos.y + dy;
+                         if (el.type === 'pen') {
+                             const pdx = dx - (el.dx || 0);
+                             const pdy = dy - (el.dy || 0);
+                             el.points = el.points.map(p => ({x: p.x + pdx, y: p.y + pdy}));
+                             el.dx = dx; el.dy = dy;
+                        }
+                    } else if (type === 'rotate') {
+                        // Calculate angle from center to mouse
+                        const currentAngle = Math.atan2(pos.y - center.y, pos.x - center.x) * 180 / Math.PI;
+                        // Initial click was approx -90 deg relative to center (top)
+                        // But easier: just set rotation to match pointer
+                        // Offset by +90 because handle is at top (-90)
+                        el.rotation = currentAngle + 90;
+                    } else if (type === 'handle') {
+                        // Resize logic keeping aspect positive
+                        // For simplicity, we only strictly support standard scaling for now. 
+                        // Rotated resizing is complex math (projecting mouse onto local axes). 
+                        // Fallback: Disable rotation during resize or simplistic bounding box resize.
+                        // Let's implement robust unrotated resize.
+                        
+                        // NOTE: If rotated, simple dx/dy on bounding box feels weird.
+                        // Ideally we project dx/dy onto the rotation vectors.
+                        // For this "Quick" tool, let's keep it simple: 
+                        // If you resize a rotated object, it might drift slightly or feel stiff.
+                        
+                        let newW = el.w;
+                        let newH = el.h;
+                        let newX = el.x;
+                        let newY = el.y;
+
+                        // Simplification: We actually update the width/height based on drag
+                        // But we check handle to know direction.
+                        // Correct logic requires un-rotating the drag vector.
+                        const rad = -(el.rotation || 0) * (Math.PI / 180);
+                        const rdx = Math.cos(rad) * dx - Math.sin(rad) * dy;
+                        const rdy = Math.sin(rad) * dx + Math.cos(rad) * dy;
+
+                        if (handle.includes('r')) newW = startDims.w + rdx;
+                        if (handle.includes('l')) { newX = startDims.x + rdx; newW = startDims.w - rdx; }
+                        if (handle.includes('b')) newH = startDims.h + rdy;
+                        if (handle.includes('t')) { newY = startDims.y + rdy; newH = startDims.h - rdy; }
+
+                        // Prevent negative flip
+                        if (newW < 0) { newX += newW; newW = Math.abs(newW); }
+                        if (newH < 0) { newY += newH; newH = Math.abs(newH); }
+
+                        el.x = newX; el.y = newY; el.w = newW; el.h = newH;
+
+                        if (el.type === 'pen') {
+                             const scaleX = newW / startDims.w;
+                             const scaleY = newH / startDims.h;
+                             // Recalc points based on relative position within new box
+                             // This is tricky if x/y shifted.
+                             // Simple approximation:
+                             el.points = el.points.map((p, i) => ({
+                                 x: newX + (startDims.points[i].x - startDims.x) * scaleX,
+                                 y: newY + (startDims.points[i].y - startDims.y) * scaleY
+                             }));
+                        }
+                    }
+                    newElements[idx] = el;
+                    setElements(newElements);
+                } else if (tool === 'pen') {
+                    currentPath.current.push(pos);
+                    const ctx = canvasRef.current.getContext('2d');
+                    ctx.save();
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.lineWidth = width;
+                    ctx.strokeStyle = color;
+                    ctx.beginPath();
+                    // Draw last segment
+                    const len = currentPath.current.length;
+                    if (len > 1) {
+                        ctx.moveTo(currentPath.current[len-2].x, currentPath.current[len-2].y);
+                        ctx.lineTo(pos.x, pos.y);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                } else if (['rect', 'circle', 'arrow'].includes(tool)) {
+                    redraw(); // Clear temp
+                    const ctx = canvasRef.current.getContext('2d');
+                    ctx.save();
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = width;
+                    const w = pos.x - dragStart.current.x;
+                    const h = pos.y - dragStart.current.y;
+                    
+                    if (tool === 'rect') ctx.strokeRect(dragStart.current.x, dragStart.current.y, w, h);
+                    else if (tool === 'circle') {
+                        ctx.beginPath();
+                        ctx.ellipse(dragStart.current.x + w/2, dragStart.current.y + h/2, Math.abs(w)/2, Math.abs(h)/2, 0, 0, 2*Math.PI);
+                        ctx.stroke();
+                    } else if (tool === 'arrow') {
+                         const head = width * 3;
+                         const angle = Math.atan2(h, w);
+                         ctx.beginPath();
+                         ctx.moveTo(dragStart.current.x, dragStart.current.y);
+                         ctx.lineTo(pos.x, pos.y);
+                         ctx.stroke();
+                         ctx.beginPath();
+                         ctx.moveTo(pos.x, pos.y);
+                         ctx.lineTo(pos.x - head * Math.cos(angle - Math.PI/6), pos.y - head * Math.sin(angle - Math.PI/6));
+                         ctx.moveTo(pos.x, pos.y);
+                         ctx.lineTo(pos.x - head * Math.cos(angle + Math.PI/6), pos.y - head * Math.sin(angle + Math.PI/6));
+                         ctx.stroke();
+                    }
+                    ctx.restore();
+                } else if (tool === 'blur' || tool === 'pixelate') {
+                    const ctx = canvasRef.current.getContext('2d');
+                    const size = width * 5;
+                    const bx = pos.x - size/2, by = pos.y - size/2;
+                    const idata = ctx.getImageData(bx, by, size, size);
+                    if (tool === 'blur') {
+                         for(let i=0; i<idata.data.length; i+=4) {
+                            if(Math.random()>0.5) {
+                                const off = Math.floor((Math.random()-0.5)*10)*4;
+                                if(i+off>=0 && i+off<idata.data.length) {
+                                    idata.data[i] = idata.data[i+off]; idata.data[i+1] = idata.data[i+off+1]; idata.data[i+2] = idata.data[i+off+2];
+                                }
+                            }
+                         }
+                    } else {
+                        const px = 10;
+                        for(let y=0; y<size; y+=px) {
+                            for(let x=0; x<size; x+=px) {
+                                const i = (y*size+x)*4;
+                                const r=idata.data[i], g=idata.data[i+1], b=idata.data[i+2];
+                                for(let Y=0; Y<px && y+Y<size; Y++)
+                                    for(let X=0; X<px && x+X<size; X++) {
+                                        const I = ((y+Y)*size+(x+X))*4;
+                                        idata.data[I]=r; idata.data[I+1]=g; idata.data[I+2]=b;
+                                    }
+                            }
+                        }
+                    }
+                    ctx.putImageData(idata, bx, by);
+                }
+            };
+
+            const handlePointerUp = (e) => {
+                if (!isDragging.current) return;
+                isDragging.current = false;
+                const pos = getCoords(e);
+                const w = pos.x - dragStart.current.x;
+                const h = pos.y - dragStart.current.y;
+
+                if (tool === 'select') {
+                    if (dragTarget.current) {
+                        if (dragTarget.current.type === 'element' && dragTarget.current.id) {
+                            // clean up pen props
+                             const el = elements.find(e => e.id === dragTarget.current.id);
+                             if(el && el.type === 'pen') { delete el.dx; delete el.dy; delete el.startDims; }
+                        }
+                        pushHistory(baseImage, elements);
+                    }
+                    dragTarget.current = null;
+                } 
+                else if (tool === 'pen') {
+                    if (currentPath.current.length > 1) {
+                        const xs = currentPath.current.map(p => p.x);
+                        const ys = currentPath.current.map(p => p.y);
+                        const minX = Math.min(...xs), maxX = Math.max(...xs);
+                        const minY = Math.min(...ys), maxY = Math.max(...ys);
+                        
+                        const newEl = {
+                            id: Date.now(),
+                            type: 'pen',
+                            x: minX, y: minY, w: maxX - minX, h: maxY - minY,
+                            style: { color, width },
+                            points: currentPath.current,
+                            rotation: 0
+                        };
+                        pushHistory(baseImage, [...elements, newEl]);
+                    }
+                } 
+                else if (['rect', 'circle', 'arrow'].includes(tool)) {
+                    if (Math.abs(w) > 5 || Math.abs(h) > 5) {
+                        let finalX = dragStart.current.x;
+                        let finalY = dragStart.current.y;
+                        let finalW = w;
+                        let finalH = h;
+                        
+                        if (finalW < 0) { finalX += finalW; finalW = Math.abs(finalW); }
+                        if (finalH < 0) { finalY += finalH; finalH = Math.abs(finalH); }
+
+                         const newEl = {
+                            id: Date.now(),
+                            type: tool,
+                            x: finalX, y: finalY, w: finalW, h: finalH,
+                            style: { color, width },
+                            rotation: 0
+                        };
+                        pushHistory(baseImage, [...elements, newEl]);
+                    }
+                }
+                else if (tool === 'blur' || tool === 'pixelate') {
+                    const ctx = canvasRef.current.getContext('2d');
+                    const finalData = ctx.getImageData(0,0, canvasRef.current.width, canvasRef.current.height);
+                    pushHistory(finalData, elements);
+                }
+            };
+
+            // --- Text Editing ---
+            const startTextEdit = (existingEl, screenX, screenY, canvasPos = null) => {
+                if (existingEl) {
+                    setTextInput({
+                        id: existingEl.id,
+                        x: screenX, y: screenY,
+                        val: existingEl.text,
+                        style: existingEl.style
+                    });
+                    setElements(prev => prev.filter(e => e.id !== existingEl.id));
+                } else {
+                    setTextInput({
+                        id: null,
+                        x: screenX, y: screenY,
+                        val: '',
+                        canvasPos,
+                        style: { color, fontSize: width * 5, bold: isBold, fontFamily }
+                    });
+                }
+            };
+
+            const commitText = () => {
+                if (!textInput) return;
+                if (textInput.val.trim()) {
+                    const ctx = canvasRef.current.getContext('2d');
+                    ctx.font = `${textInput.style.bold ? 'bold' : ''} ${textInput.style.fontSize}px ${textInput.style.fontFamily}`;
+                    const lines = textInput.val.split('\n');
+                    const metrics = ctx.measureText(lines.reduce((a, b) => a.length > b.length ? a : b));
+                    const h = lines.length * (textInput.style.fontSize * 1.2);
+                    
+                    const coords = textInput.canvasPos || getCoords({clientX: textInput.x, clientY: textInput.y});
+
+                    const newEl = {
+                        id: textInput.id || Date.now(),
+                        type: 'text',
+                        text: textInput.val,
+                        x: coords.x, y: coords.y, 
+                        w: metrics.width, h,
+                        style: textInput.style,
+                        rotation: 0
+                    };
+                    pushHistory(baseImage, [...elements, newEl]);
+                } else if (textInput.id) {
+                    pushHistory(baseImage, elements);
+                }
+                setTextInput(null);
+            };
+
+            const triggerAutoCopy = () => {
+                if (copyTimeout.current) clearTimeout(copyTimeout.current);
+                copyTimeout.current = setTimeout(async () => {
+                    const canvas = canvasRef.current;
+                    if (canvas) {
+                        try {
+                            canvas.toBlob(blob => {
+                                const item = new ClipboardItem({ 'image/png': blob });
+                                navigator.clipboard.write([item]);
+                            });
+                        } catch(e) {}
+                    }
+                }, 1000);
+            };
+            
+            const saveFile = () => {
+                const link = document.createElement('a');
+                link.download = `markup-${Date.now()}.png`;
+                link.href = canvasRef.current.toDataURL();
+                link.click();
+            };
+
+            const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 3000); };
+
+            useEffect(() => {
+                const hPaste = (e) => {
+                    const items = e.clipboardData.items;
+                    for (let i=0; i<items.length; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                            const blob = items[i].getAsFile();
+                            const img = new Image();
+                            img.src = URL.createObjectURL(blob);
+                            img.onload = () => initCanvas(img);
+                        }
+                    }
+                };
+                window.addEventListener('paste', hPaste);
+                return () => window.removeEventListener('paste', hPaste);
+            }, [history]);
+
+            return (
+                <div className="flex flex-col h-screen w-full relative bg-gray-100 dark:bg-zinc-950">
+                    <div className="flex items-center justify-between px-3 py-2 bg-white dark:bg-zinc-900 border-b dark:border-zinc-800 shadow-sm z-20 shrink-0">
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                            <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 mr-2">V3.1</span>
+                            <div className="flex gap-1 bg-gray-100 dark:bg-zinc-800 p-1 rounded-lg">
+                                {[
+                                    { id: 'select', icon: Icons.Select },
+                                    { id: 'pen', icon: Icons.Pen },
+                                    { id: 'rect', icon: Icons.Square },
+                                    { id: 'circle', icon: Icons.Circle },
+                                    { id: 'arrow', icon: Icons.Arrow },
+                                    { id: 'text', icon: Icons.Text },
+                                ].map(t => (
+                                    <button
+                                        key={t.id}
+                                        onClick={() => { setTool(t.id); setSelectedId(null); }}
+                                        className={`p-2 rounded-md ${tool === t.id ? 'bg-white dark:bg-zinc-700 text-blue-500 shadow-sm' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-zinc-700'}`}
+                                    >
+                                        <t.icon />
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                            <div className="flex gap-1 bg-gray-100 dark:bg-zinc-800 p-1 rounded-lg">
+                                <button onClick={() => setTool('blur')} className={`p-2 rounded-md ${tool === 'blur' ? 'bg-white dark:bg-zinc-700 text-blue-500' : 'text-gray-500'}`} title="Blur"><Icons.Blur/></button>
+                                <button onClick={() => setTool('pixelate')} className={`p-2 rounded-md ${tool === 'pixelate' ? 'bg-white dark:bg-zinc-700 text-blue-500' : 'text-gray-500'}`} title="Pixelate"><Icons.Pixel/></button>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                             <div className="hidden sm:flex bg-gray-100 dark:bg-zinc-800 rounded-lg p-1">
+                                <button onClick={undo} disabled={historyIndex<=0} className="p-2 disabled:opacity-30"><Icons.Undo/></button>
+                                <button onClick={redo} disabled={historyIndex>=history.length-1} className="p-2 disabled:opacity-30"><Icons.Redo/></button>
+                             </div>
+                             <button onClick={saveFile} className="bg-blue-600 text-white p-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-blue-700">
+                                <Icons.Download/> <span className="hidden sm:inline">Save</span>
+                             </button>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4 px-4 py-2 bg-white dark:bg-zinc-900 border-b dark:border-zinc-800 text-sm overflow-x-auto no-scrollbar shrink-0 h-14">
+                        <div className="flex items-center gap-2 shrink-0">
+                            {['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#ffffff', '#000000'].map(c => (
+                                <button 
+                                    key={c}
+                                    onClick={() => {
+                                        setColor(c);
+                                        if(selectedId) {
+                                            const newEls = elements.map(el => el.id === selectedId ? {...el, style: {...el.style, color: c}} : el);
+                                            setElements(newEls);
+                                            pushHistory(baseImage, newEls);
+                                        }
+                                    }}
+                                    className={`w-5 h-5 rounded-full border border-gray-200 dark:border-zinc-700 ${color === c ? 'ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-zinc-900' : ''}`}
+                                    style={{ backgroundColor: c }}
+                                />
+                            ))}
+                        </div>
+                        <div className="w-px h-6 bg-gray-200 dark:bg-zinc-700"></div>
+                        <div className="flex items-center gap-2 shrink-0">
+                             <span className="text-gray-500">Size</span>
+                             <input type="range" min="1" max="50" value={width} onChange={(e) => {
+                                 const w = parseInt(e.target.value);
+                                 setWidth(w);
+                                 if(selectedId) {
+                                     const newEls = elements.map(el => el.id === selectedId ? {...el, style: {...el.style, width: w, fontSize: w*5}} : el);
+                                     setElements(newEls);
+                                     pushHistory(baseImage, newEls);
+                                 }
+                             }} className="w-24"/>
+                        </div>
+                        {(tool === 'text' || (selectedId && elements.find(e => e.id === selectedId)?.type === 'text')) && (
+                            <>
+                                <div className="w-px h-6 bg-gray-200 dark:bg-zinc-700"></div>
+                                <button 
+                                    onClick={() => {
+                                        const newVal = !isBold;
+                                        setIsBold(newVal);
+                                        if(selectedId) {
+                                            const newEls = elements.map(el => el.id === selectedId ? {...el, style: {...el.style, bold: newVal}} : el);
+                                            setElements(newEls);
+                                            pushHistory(baseImage, newEls);
+                                        }
+                                    }}
+                                    className={`p-1 rounded ${isBold ? 'bg-blue-100 text-blue-600' : 'text-gray-600'}`}
+                                >
+                                    <Icons.Bold/>
+                                </button>
+                                <select 
+                                    value={fontFamily} 
+                                    onChange={(e) => {
+                                        setFontFamily(e.target.value);
+                                        if(selectedId) {
+                                            const newEls = elements.map(el => el.id === selectedId ? {...el, style: {...el.style, fontFamily: e.target.value}} : el);
+                                            setElements(newEls);
+                                            pushHistory(baseImage, newEls);
+                                        }
+                                    }}
+                                    className="bg-transparent text-gray-700 dark:text-gray-300 border-none outline-none"
+                                >
+                                    {Fonts.map(f => <option key={f.name} value={f.val}>{f.name}</option>)}
+                                </select>
+                            </>
+                        )}
+                    </div>
+                    <div className="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-zinc-950" ref={containerRef}>
+                        {baseImage && (
+                            <div className={`absolute left-4 top-4 z-10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur border border-gray-200 dark:border-zinc-800 rounded-xl shadow-xl transition-all duration-300 ${isMenuOpen ? 'w-64 p-4' : 'w-10 h-10 p-0 flex items-center justify-center overflow-hidden'}`}>
+                                <button 
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                                >
+                                    {isMenuOpen ? <Icons.ChevronUp/> : <Icons.ChevronDown/>}
+                                </button>
+                                {isMenuOpen && (
+                                    <div className="space-y-4 mt-2">
+                                        <h3 className="text-xs font-bold uppercase text-gray-400 tracking-wider">Adjustments</h3>
+                                        {Object.keys(filters).map(key => (
+                                            <div key={key}>
+                                                <div className="flex justify-between text-xs mb-1 capitalize text-gray-600 dark:text-gray-300">
+                                                    <span>{key}</span>
+                                                    <span>{filters[key]}</span>
+                                                </div>
+                                                <input 
+                                                    type="range" 
+                                                    min={key === 'hue' ? -180 : 0} 
+                                                    max={key === 'hue' ? 180 : 200}
+                                                    value={filters[key]}
+                                                    onChange={(e) => setFilters({...filters, [key]: parseInt(e.target.value)})}
+                                                    className="w-full"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        {!baseImage && (
+                            <div className="text-center p-8 border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-2xl pointer-events-none">
+                                <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">Drag & Drop Image</h3>
+                                <p className="text-gray-500">or Ctrl+V to paste</p>
+                                <label className="pointer-events-auto mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-full cursor-pointer hover:bg-blue-700">
+                                    Browse
+                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                                        if(e.target.files[0]) {
+                                            const img = new Image();
+                                            img.src = URL.createObjectURL(e.target.files[0]);
+                                            img.onload = () => initCanvas(img);
+                                        }
+                                    }}/>
+                                </label>
+                            </div>
+                        )}
+                        <div className={`relative shadow-2xl checkboard ${!baseImage ? 'hidden' : 'block'}`}>
+                            <canvas
+                                ref={canvasRef}
+                                onPointerDown={handlePointerDown}
+                                onPointerMove={handlePointerMove}
+                                onPointerUp={handlePointerUp}
+                                onPointerLeave={handlePointerUp}
+                                className="block max-w-full max-h-[80vh] touch-none"
+                                style={{
+                                    cursor: tool === 'select' ? 'default' : tool === 'text' ? 'text' : 'crosshair',
+                                    filter: `brightness(${filters.brightness}%) contrast(${filters.contrast}%) saturate(${filters.saturate}%) hue-rotate(${filters.hue}deg)`
+                                }}
+                            />
+                        </div>
+                        {textInput && (
+                            <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center" onClick={() => commitText()}>
+                                <textarea
+                                    autoFocus
+                                    value={textInput.val}
+                                    onChange={e => setTextInput({...textInput, val: e.target.value})}
+                                    onClick={e => e.stopPropagation()}
+                                    onKeyDown={e => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commitText(); } }}
+                                    className="bg-transparent border-2 border-blue-500 rounded p-2 text-center resize-none outline-none shadow-xl backdrop-blur-sm"
+                                    style={{
+                                        position: 'fixed',
+                                        left: textInput.x,
+                                        top: textInput.y,
+                                        transform: 'translate(-50%, -50%)',
+                                        color: color,
+                                        fontSize: `${textInput.style.fontSize}px`,
+                                        fontFamily: textInput.style.fontFamily,
+                                        fontWeight: textInput.style.bold ? 'bold' : 'normal',
+                                        minWidth: '200px',
+                                        minHeight: '100px'
+                                    }}
+                                    placeholder="Type here..."
+                                />
+                                <div className="absolute top-4 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+                                    Click outside or Enter to Save • Shift+Enter for new line
+                                </div>
+                            </div>
+                        )}
+                        {toast && <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg animate-bounce z-50">{toast}</div>}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
