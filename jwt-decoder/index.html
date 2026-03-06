@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Markup - BrowserTools</title>
+    <title>JWT Decoder - BrowserTools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Fabric.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </head>
 <body>
@@ -31,7 +23,7 @@
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
-                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Markup</h1>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">JWT Decoder</h1>
             </div>
             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
@@ -39,9 +31,16 @@
 
         <main class="content-wrapper">
             <div class="card">
-                <p class="text-muted mb-4">Draw and add text to images.</p>
+                <p class="text-muted mb-4">Decode JSON Web Tokens.</p>
 
-    <div id="root" style="width: 100%; height: 75vh; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; position: relative;"></div>
+        <textarea id="input" class="input-control" placeholder="Paste JWT here..."></textarea>
+        <div class="flex gap-2 my-2">
+            <button class="btn btn-primary" id="btnDecode">Decode JWT</button>
+        </div>
+        <label class="input-label">Header</label>
+        <textarea id="outHeader" class="input-control mb-2" style="font-family: monospace;" readonly></textarea>
+        <label class="input-label">Payload</label>
+        <textarea id="outPayload" class="input-control" style="font-family: monospace; min-height: 150px;" readonly></textarea>
 
             </div>
         </main>
@@ -50,7 +49,17 @@
     <script src="../assets/js/main.js"></script>
     <script>
 
+        document.getElementById('btnDecode').onclick = () => {
+            try {
+                const token = document.getElementById('input').value.split('.');
+                if(token.length !== 3) throw new Error("Invalid JWT format.");
+                const header = JSON.parse(atob(token[0].replace(/-/g, '+').replace(/_/g, '/')));
+                const payload = JSON.parse(atob(token[1].replace(/-/g, '+').replace(/_/g, '/')));
+                document.getElementById('outHeader').value = JSON.stringify(header, null, 2);
+                document.getElementById('outPayload').value = JSON.stringify(payload, null, 2);
+            } catch(e) { alert("Error decoding JWT: " + e.message); }
+        };
+
     </script>
-<script type="text/babel" src="app.jsx"></script>
 </body>
 </html>

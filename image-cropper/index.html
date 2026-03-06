@@ -2,419 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Professional Image Cropper</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --border-hover: #cbd5e1;
-            --checker-1: #f0f0f0;
-            --checker-2: transparent;
-            --select-arrow: "%2364748b";
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper - BrowserTools</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary: #3b82f6;
-                --primary-hover: #60a5fa;
-                --bg-color: #0f172a;
-                --card-bg: #1e293b;
-                --text-main: #f8fafc;
-                --text-muted: #94a3b8;
-                --border-color: #334155;
-                --border-hover: #475569;
-                --checker-1: #0f172a;
-                --checker-2: #1e293b;
-                --select-arrow: "%2394a3b8";
-            }
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem 1rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.025em;
-        }
-        
-        .header p {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        .container {
-            background-color: var(--card-bg);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            border: 1px solid var(--border-color);
-            width: 100%;
-            max-width: 900px;
-            padding: 2rem;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .drop-zone {
-            border: 2px dashed var(--border-color);
-            border-radius: 0.75rem;
-            padding: 4rem 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background-color: var(--bg-color);
-        }
-
-        .drop-zone:hover, .drop-zone.dragover {
-            border-color: var(--primary);
-            background-color: rgba(59, 130, 246, 0.05);
-        }
-
-        .drop-zone svg {
-            width: 48px;
-            height: 48px;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-
-        .drop-zone p {
-            font-size: 1.125rem;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            pointer-events: none;
-        }
-        
-        .drop-zone span {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            pointer-events: none;
-            display: block;
-            margin-bottom: 1.5rem;
-        }
-
-        .drop-zone input[type="file"] {
-            display: none;
-        }
-
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s, box-shadow 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn:hover {
-            background-color: var(--primary-hover);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        }
-
-        .workspace {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .editor-container {
-            position: relative;
-            max-width: 100%;
-            max-height: 60vh;
-            overflow: hidden;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            user-select: none;
-            background-color: var(--checker-2);
-            background-image: linear-gradient(45deg, var(--checker-1) 25%, transparent 25%), 
-                              linear-gradient(-45deg, var(--checker-1) 25%, transparent 25%), 
-                              linear-gradient(45deg, transparent 75%, var(--checker-1) 75%), 
-                              linear-gradient(-45deg, transparent 75%, var(--checker-1) 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            transition: background-color 0.3s ease;
-        }
-
-        #source-image {
-            display: block;
-            max-width: 100%;
-            max-height: 60vh;
-            pointer-events: none;
-        }
-
-        .crop-box {
-            position: absolute;
-            top: 10%;
-            left: 10%;
-            width: 50%;
-            height: 50%;
-            border: 2px solid #ffffff;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0,0,0,0.3) inset;
-            cursor: move;
-            transition: border-radius 0.1s ease;
-            touch-action: none;
-        }
-
-        .crop-box::before, .crop-box::after,
-        .crop-box-inner::before, .crop-box-inner::after {
-            content: '';
-            position: absolute;
-            background: #ffffff;
-        }
-
-        .resizer {
-            position: absolute;
-            bottom: -8px;
-            right: -8px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--primary);
-            border: 2px solid white;
-            border-radius: 50%;
-            cursor: nwse-resize;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            touch-action: none;
-            z-index: 10;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.25rem;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            background: var(--bg-color);
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            border: 1px solid var(--border-color);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .controls-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.25rem;
-            align-items: center;
-            flex: 1;
-        }
-
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .control-group label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-main);
-            white-space: nowrap;
-        }
-
-        select {
-            padding: 0.5rem 2rem 0.5rem 0.75rem;
-            border-radius: 0.375rem;
-            border: 1px solid var(--border-hover);
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            font-size: 0.875rem;
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='var(--select-arrow)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 1px var(--primary);
-        }
-
-        input[type="range"] {
-            accent-color: var(--primary);
-            cursor: pointer;
-            width: 100px;
-        }
-
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-main);
-            white-space: nowrap;
-        }
-        
-        .checkbox-wrapper input {
-            cursor: pointer;
-            width: 1rem;
-            height: 1rem;
-            accent-color: var(--primary);
-        }
-
-        .actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn-outline {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-hover);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--bg-color);
-            box-shadow: none;
-        }
-        
-        @media (max-width: 850px) {
-            .container {
-                padding: 1rem;
-            }
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .controls-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .control-group {
-                justify-content: space-between;
-            }
-            .actions {
-                width: 100%;
-                margin-top: 0.5rem;
-            }
-            .actions .btn {
-                flex: 1;
-            }
-        }
-    </style>
 </head>
 <body>
+    <aside class="sidebar" id="sidebar">
+        <a href="../index.html" class="sidebar-header">
+            🛠️ BrowserTools
+        </a>
+        <div class="sidebar-content">
+            <div class="sidebar-nav-group"><div class="sidebar-nav-title">Developer</div><a href="../base64-encode-decode/index.html" class="sidebar-link">🔤 Base64 Encode/Decode</a><a href="../url-encode-decode/index.html" class="sidebar-link">🔗 URL Encode/Decode</a><a href="../html-encode-decode/index.html" class="sidebar-link">🌐 HTML Entity Encode/Decode</a><a href="../json-formatter/index.html" class="sidebar-link">📋 JSON Formatter</a><a href="../json-minifier/index.html" class="sidebar-link">📦 JSON Minifier</a><a href="../uuid-generator/index.html" class="sidebar-link">🆔 UUID/GUID Generator</a><a href="../lorem-ipsum/index.html" class="sidebar-link">📝 Lorem Ipsum Generator</a><a href="../hash-generator/index.html" class="sidebar-link">🔐 Hash Generator</a><a href="../unix-timestamp/index.html" class="sidebar-link">⏳ Unix Timestamp Converter</a><a href="../color-converter/index.html" class="sidebar-link">🎨 Color Converter</a><a href="../jwt-decoder/index.html" class="sidebar-link">🔑 JWT Decoder</a><a href="../markdown-previewer/index.html" class="sidebar-link">⬇️ Markdown Previewer</a><a href="../csv-to-json/index.html" class="sidebar-link">🔄 CSV to JSON</a><a href="../json-to-csv/index.html" class="sidebar-link">🔄 JSON to CSV</a><a href="../sql-formatter/index.html" class="sidebar-link">🗄️ SQL Formatter</a><a href="../regex-tester/index.html" class="sidebar-link">🔍 Regex Tester</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Text</div><a href="../word-counter/index.html" class="sidebar-link">📊 Word & Character Counter</a><a href="../case-converter/index.html" class="sidebar-link">Aa Case Converter</a><a href="../text-reverser/index.html" class="sidebar-link">🔃 Text Reverser</a><a href="../remove-duplicates/index.html" class="sidebar-link">✂️ Remove Duplicate Lines</a><a href="../sort-lines/index.html" class="sidebar-link">🔢 Sort Lines</a><a href="../text-to-binary/index.html" class="sidebar-link">01 Text to Binary</a><a href="../binary-to-text/index.html" class="sidebar-link">10 Binary to Text</a><a href="../find-replace/index.html" class="sidebar-link">🔎 Find & Replace</a><a href="../whitespace-remover/index.html" class="sidebar-link">🧹 Whitespace Remover</a><a href="../password-generator/index.html" class="sidebar-link">🛡️ Password Generator</a><a href="../prefix-suffix-adder/index.html" class="sidebar-link">➕ Prefix/Suffix Adder</a><a href="../comma-separator/index.html" class="sidebar-link">📑 Comma Separator</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Math</div><a href="../unit-converter/index.html" class="sidebar-link">📏 Unit Converter</a><a href="../base-converter/index.html" class="sidebar-link">🧮 Number Base Converter</a><a href="../percentage-calculator/index.html" class="sidebar-link">% Percentage Calculator</a><a href="../bmi-calculator/index.html" class="sidebar-link">⚖️ BMI Calculator</a><a href="../roman-numerals/index.html" class="sidebar-link">🏛️ Roman Numeral Converter</a><a href="../prime-checker/index.html" class="sidebar-link">✨ Prime Number Checker</a><a href="../color-contrast/index.html" class="sidebar-link">🌗 Color Contrast Checker</a><a href="../gcd-lcm/index.html" class="sidebar-link">➗ GCD/LCM Calculator</a><a href="../random-number/index.html" class="sidebar-link">🎲 Random Number Generator</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Media</div><a href="../image-converter/index.html" class="sidebar-link">🖼️ Image Converter</a><a href="../image-cropper/index.html" class="sidebar-link">✂️ Image Cropper</a><a href="../image-markup/index.html" class="sidebar-link">🖍️ Image Markup</a><a href="../video-extractor/index.html" class="sidebar-link">🎞️ Video Frame Extractor</a><a href="../pdf-info/index.html" class="sidebar-link">📄 PDF Metadata Viewer</a><a href="../qr-generator/index.html" class="sidebar-link">📱 QR Code Generator</a><a href="../image-to-base64/index.html" class="sidebar-link">🔄 Image to Base64</a><a href="../base64-to-image/index.html" class="sidebar-link">🖼️ Base64 to Image</a><a href="../svg-optimizer/index.html" class="sidebar-link">📉 SVG Optimizer</a><a href="../color-extractor/index.html" class="sidebar-link">🎨 Color Extractor</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Misc</div><a href="../ip-info/index.html" class="sidebar-link">🌐 IP Address Info</a><a href="../key-event/index.html" class="sidebar-link">⌨️ Keyboard Event Info</a><a href="../system-info/index.html" class="sidebar-link">💻 System Information</a><a href="../meta-tags/index.html" class="sidebar-link">🏷️ Meta Tag Generator</a><a href="../stopwatch/index.html" class="sidebar-link">⏱️ Stopwatch</a></div>
+        </div>
+    </aside>
 
-    <div class="header">
-        <h1>Image Cropping Tool</h1>
-        <p>Upload, adjust, and export your images securely.</p>
-    </div>
-
-    <div class="container">
-        <div id="drop-zone" class="drop-zone">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-            </svg>
-            <p>Drag & drop an image here</p>
-            <span>or press Ctrl+V to paste from clipboard</span>
-            <input type="file" id="file-input" accept="image/*">
-            <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">
-                Browse Files
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Cropper</h1>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
-        </div>
+        </header>
 
-        <div id="workspace" class="workspace">
-            <div class="editor-container" id="editor-container">
-                <img id="source-image" src="" alt="Source Image">
-                <div id="crop-box" class="crop-box">
-                    <div class="crop-box-inner"></div>
-                    <div id="resizer" class="resizer"></div>
-                </div>
+        <main class="content-wrapper">
+            <div class="card">
+                <p class="text-muted mb-4">Crop and resize images.</p>
+
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+        <div class="drop-zone" id="drop-zone" style="width: 100%; min-height: 240px; border: 2px dashed var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; margin-bottom: 2rem;">
+            <div style="pointer-events: none; text-align: center;">
+                <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Drop an image here</div>
+                <div style="color: var(--text-muted); font-size: 0.9rem;">or paste from clipboard (Ctrl+V)</div>
             </div>
-
-            <div class="controls">
-                <div class="controls-row">
-                    <div class="control-group">
-                        <label for="aspect-ratio">Aspect Ratio</label>
-                        <select id="aspect-ratio">
-                            <option value="free">Freeform</option>
-                            <option value="1">1:1 (Square)</option>
-                            <option value="1.333333">4:3 (Standard)</option>
-                            <option value="1.777777">16:9 (Widescreen)</option>
-                            <option value="0.5625">9:16 (Story)</option>
-                        </select>
-                    </div>
-
-                    <div class="control-group">
-                        <label for="format-select">Format</label>
-                        <select id="format-select">
-                            <option value="image/png">PNG</option>
-                            <option value="image/jpeg">JPEG</option>
-                            <option value="image/webp">WEBP</option>
-                        </select>
-                    </div>
-
-                    <div class="control-group">
-                        <label for="border-radius-slider">Rounding</label>
-                        <input type="range" id="border-radius-slider" min="0" max="50" value="0">
-                    </div>
-
-                    <label class="checkbox-wrapper">
-                        <input type="checkbox" id="round-crop-toggle">
-                        Circular Crop
-                    </label>
+            <input type="file" id="file-input" accept="image/*" style="position: absolute; inset: 0; opacity: 0; cursor: pointer;">
+        </div>
+        <div id="workspace" style="display: none; width: 100%;">
+            <div style="display: flex; gap: 1rem; align-items: center; background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1rem; flex-wrap: wrap;">
+                <select id="aspect-ratio" class="input-control" style="width: auto;">
+                    <option value="free">Freeform</option>
+                    <option value="1">1:1 (Square)</option>
+                    <option value="1.3333">4:3 (Standard)</option>
+                    <option value="1.7777">16:9 (Widescreen)</option>
+                    <option value="0.5625">9:16 (Story/Reel)</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label style="font-size: 0.9rem;">Corner Radius</label>
+                    <input type="range" id="border-radius" min="0" max="50" value="0">
                 </div>
-
-                <div class="actions">
-                    <button id="reset-btn" class="btn btn-outline">Cancel</button>
-                    <button id="save-btn" class="btn">
-                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Export Image
-                    </button>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                    <input type="checkbox" id="round-crop"> Circular Crop
+                </label>
+                <select id="format-select" class="input-control" style="width: auto; margin-left: auto;">
+                    <option value="image/png">PNG</option>
+                    <option value="image/jpeg">JPEG</option>
+                    <option value="image/webp">WebP</option>
+                </select>
+                <button id="save-btn" class="btn btn-primary">Download Crop</button>
+                <button id="reset-btn" class="btn btn-secondary">Cancel</button>
+            </div>
+            <div id="editor-container" style="position: relative; width: 100%; max-height: 70vh; display: flex; justify-content: center; align-items: center; background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; border-radius: var(--radius-md); overflow: hidden;">
+                <img id="source-image" src="" style="max-width: 100%; max-height: 70vh; display: block; pointer-events: none; opacity: 0.4;">
+                <div id="crop-box" style="position: absolute; border: 2px solid #00f; background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5); cursor: move; width: 200px; height: 200px; top: 10%; left: 10%; border-radius: 0%; overflow: hidden;">
+                    <div id="resizer" style="width: 20px; height: 20px; background: #00f; position: absolute; right: -2px; bottom: -2px; cursor: se-resize; border-radius: 50%;"></div>
                 </div>
             </div>
         </div>
     </div>
 
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
     <script>
+
+
+
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const workspace = document.getElementById('workspace');
@@ -734,6 +402,9 @@
                 URL.revokeObjectURL(url);
             }, format, 1.0); // Maximum quality export
         });
+
+
+
     </script>
 </body>
 </html>

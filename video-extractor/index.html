@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Markup - BrowserTools</title>
+    <title>Video Frame Extractor - BrowserTools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Fabric.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </head>
 <body>
@@ -31,7 +23,7 @@
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
-                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Markup</h1>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">Video Frame Extractor</h1>
             </div>
             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
@@ -39,9 +31,17 @@
 
         <main class="content-wrapper">
             <div class="card">
-                <p class="text-muted mb-4">Draw and add text to images.</p>
+                <p class="text-muted mb-4">Extract frames/snapshots from video files.</p>
 
-    <div id="root" style="width: 100%; height: 75vh; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; position: relative;"></div>
+        <div class="flex flex-col gap-4">
+            <input type="file" id="videoInput" accept="video/*" class="input-control p-2">
+            <video id="videoPlayer" controls class="w-full bg-black rounded-md hidden"></video>
+            <div class="flex gap-4 items-center w-full">
+                <button class="btn btn-primary hidden" id="btnCapture">Capture Frame at Current Time</button>
+                <span id="currentTimeDisplay" class="font-mono"></span>
+            </div>
+            <div id="frames" class="flex gap-4 flex-wrap mt-4 w-full"></div>
+        </div>
 
             </div>
         </main>
@@ -50,7 +50,35 @@
     <script src="../assets/js/main.js"></script>
     <script>
 
+        const input = document.getElementById('videoInput');
+        const video = document.getElementById('videoPlayer');
+        const btnCapture = document.getElementById('btnCapture');
+        const frames = document.getElementById('frames');
+        const timeDisplay = document.getElementById('currentTimeDisplay');
+
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                video.src = URL.createObjectURL(file);
+                video.classList.remove('hidden');
+                btnCapture.classList.remove('hidden');
+            }
+        });
+        video.addEventListener('timeupdate', () => { timeDisplay.innerText = "Time: " + video.currentTime.toFixed(2) + "s"; });
+        btnCapture.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d'); ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const img = document.createElement('img'); img.src = canvas.toDataURL('image/png');
+            img.className = 'w-48 rounded-sm border border-[var(--border-color)] object-contain';
+
+            const wrapper = document.createElement('div'); wrapper.className = 'flex flex-col gap-2';
+            const a = document.createElement('a'); a.href = img.src; a.download = `frame-${video.currentTime.toFixed(2)}s.png`;
+            a.className = 'btn btn-secondary text-sm p-1'; a.innerText = 'Download';
+
+            wrapper.appendChild(img); wrapper.appendChild(a); frames.insertBefore(wrapper, frames.firstChild);
+        });
+
     </script>
-<script type="text/babel" src="app.jsx"></script>
 </body>
 </html>

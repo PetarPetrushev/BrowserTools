@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Markup - BrowserTools</title>
+    <title>Lorem Ipsum Generator - BrowserTools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Fabric.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </head>
 <body>
@@ -31,7 +23,7 @@
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
-                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Markup</h1>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">Lorem Ipsum Generator</h1>
             </div>
             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
@@ -39,9 +31,14 @@
 
         <main class="content-wrapper">
             <div class="card">
-                <p class="text-muted mb-4">Draw and add text to images.</p>
+                <p class="text-muted mb-4">Generate dummy text for designs.</p>
 
-    <div id="root" style="width: 100%; height: 75vh; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; position: relative;"></div>
+        <div class="flex gap-2 my-2 items-center">
+            <label>Paragraphs:</label>
+            <input type="number" id="paras" class="input-control" style="width: 80px;" value="3" min="1" max="20">
+            <button class="btn btn-primary" id="btnGen">Generate</button>
+        </div>
+        <textarea id="output" class="input-control" style="min-height: 300px;" readonly></textarea>
 
             </div>
         </main>
@@ -50,7 +47,24 @@
     <script src="../assets/js/main.js"></script>
     <script>
 
+        const words = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua"];
+        document.getElementById('btnGen').onclick = () => {
+            let pCount = parseInt(document.getElementById('paras').value) || 3;
+            let res = [];
+            for(let p=0; p<pCount; p++) {
+                let sent = [];
+                for(let s=0; s<5; s++) {
+                    let w = [];
+                    for(let i=0; i<8; i++) w.push(words[Math.floor(Math.random()*words.length)]);
+                    w[0] = w[0].charAt(0).toUpperCase() + w[0].slice(1);
+                    sent.push(w.join(" ") + ".");
+                }
+                res.push(sent.join(" "));
+            }
+            document.getElementById('output').value = res.join("\n\n");
+        };
+        document.getElementById('btnGen').click();
+
     </script>
-<script type="text/babel" src="app.jsx"></script>
 </body>
 </html>
