@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Markup - BrowserTools</title>
+    <title>Color Contrast Checker - BrowserTools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Fabric.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </head>
 <body>
@@ -31,7 +23,7 @@
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
-                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Markup</h1>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">Color Contrast Checker</h1>
             </div>
             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
@@ -39,9 +31,13 @@
 
         <main class="content-wrapper">
             <div class="card">
-                <p class="text-muted mb-4">Draw and add text to images.</p>
+                <p class="text-muted mb-4">Check contrast ratio between two colors.</p>
 
-    <div id="root" style="width: 100%; height: 75vh; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; position: relative;"></div>
+        <div class="flex gap-4">
+            <div><label>Color 1</label><input type="color" id="c1" value="#ffffff" class="w-16 h-16 cursor-pointer"></div>
+            <div><label>Color 2</label><input type="color" id="c2" value="#000000" class="w-16 h-16 cursor-pointer"></div>
+        </div>
+        <div class="mt-4 text-2xl font-bold" id="res"></div>
 
             </div>
         </main>
@@ -50,7 +46,27 @@
     <script src="../assets/js/main.js"></script>
     <script>
 
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+        }
+        function luminance(r, g, b) {
+            var a = [r, g, b].map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+            return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+        }
+        const calc = () => {
+            let rgb1 = hexToRgb(document.getElementById('c1').value);
+            let rgb2 = hexToRgb(document.getElementById('c2').value);
+            let l1 = luminance(rgb1.r, rgb1.g, rgb1.b);
+            let l2 = luminance(rgb2.r, rgb2.g, rgb2.b);
+            let ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+            let res = ratio.toFixed(2) + " : 1";
+            document.getElementById('res').innerText = res;
+        };
+        document.getElementById('c1').oninput = calc;
+        document.getElementById('c2').oninput = calc;
+        calc();
+
     </script>
-<script type="text/babel" src="app.jsx"></script>
 </body>
 </html>

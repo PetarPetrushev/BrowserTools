@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Markup - BrowserTools</title>
+    <title>PDF Metadata Viewer - BrowserTools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Fabric.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </head>
 <body>
@@ -31,7 +23,7 @@
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
-                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Markup</h1>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">PDF Metadata Viewer</h1>
             </div>
             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
@@ -39,9 +31,10 @@
 
         <main class="content-wrapper">
             <div class="card">
-                <p class="text-muted mb-4">Draw and add text to images.</p>
+                <p class="text-muted mb-4">Inspect PDF files metadata securely.</p>
 
-    <div id="root" style="width: 100%; height: 75vh; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; position: relative;"></div>
+        <input type="file" id="pdfInput" accept="application/pdf" class="input-control p-2 mb-4">
+        <div id="output" class="p-4 bg-[var(--bg-surface)] rounded-md border border-[var(--border-color)] font-mono whitespace-pre-wrap">Select a PDF file...</div>
 
             </div>
         </main>
@@ -50,7 +43,12 @@
     <script src="../assets/js/main.js"></script>
     <script>
 
+        document.getElementById('pdfInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            document.getElementById('output').innerText = `File Name: ${file.name}\nSize: ${(file.size/1024).toFixed(2)} KB\nLast Modified: ${new Date(file.lastModified).toLocaleString()}\nType: ${file.type}\n\n(Note: Full text parsing requires external libs. This views standard file metadata securely in browser.)`;
+        });
+
     </script>
-<script type="text/babel" src="app.jsx"></script>
 </body>
 </html>

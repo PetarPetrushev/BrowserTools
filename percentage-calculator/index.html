@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Markup - BrowserTools</title>
+    <title>Percentage Calculator - BrowserTools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Fabric.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </head>
 <body>
@@ -31,7 +23,7 @@
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
-                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Markup</h1>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">Percentage Calculator</h1>
             </div>
             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
@@ -39,9 +31,18 @@
 
         <main class="content-wrapper">
             <div class="card">
-                <p class="text-muted mb-4">Draw and add text to images.</p>
+                <p class="text-muted mb-4">Calculate percentages.</p>
 
-    <div id="root" style="width: 100%; height: 75vh; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; position: relative;"></div>
+        <div class="flex items-center gap-2 mb-4">
+            <span>What is</span><input type="number" id="p1" class="input-control w-20"><span>% of</span><input type="number" id="v1" class="input-control w-24">
+            <button class="btn btn-primary ml-2" onclick="c1()">Calc</button>
+            <span class="font-bold ml-2 text-[var(--accent-color)]" id="r1">-</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="number" id="v2a" class="input-control w-24"><span>is what % of</span><input type="number" id="v2b" class="input-control w-24">
+            <button class="btn btn-primary ml-2" onclick="c2()">Calc</button>
+            <span class="font-bold ml-2 text-[var(--accent-color)]" id="r2">-</span>
+        </div>
 
             </div>
         </main>
@@ -50,7 +51,9 @@
     <script src="../assets/js/main.js"></script>
     <script>
 
+        window.c1 = () => { document.getElementById('r1').innerText = (document.getElementById('p1').value / 100 * document.getElementById('v1').value).toFixed(2); };
+        window.c2 = () => { document.getElementById('r2').innerText = ((document.getElementById('v2a').value / document.getElementById('v2b').value) * 100).toFixed(2) + '%'; };
+
     </script>
-<script type="text/babel" src="app.jsx"></script>
 </body>
 </html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowserTools - 50+ Web Utilities</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <a href="./index.html" class="sidebar-header">
+            🛠️ BrowserTools
+        </a>
+        <div class="sidebar-content">
+            <div class="sidebar-nav-group"><div class="sidebar-nav-title">Developer</div><a href="./base64-encode-decode/index.html" class="sidebar-link">🔤 Base64 Encode/Decode</a><a href="./url-encode-decode/index.html" class="sidebar-link">🔗 URL Encode/Decode</a><a href="./html-encode-decode/index.html" class="sidebar-link">🌐 HTML Entity Encode/Decode</a><a href="./json-formatter/index.html" class="sidebar-link">📋 JSON Formatter</a><a href="./json-minifier/index.html" class="sidebar-link">📦 JSON Minifier</a><a href="./uuid-generator/index.html" class="sidebar-link">🆔 UUID/GUID Generator</a><a href="./lorem-ipsum/index.html" class="sidebar-link">📝 Lorem Ipsum Generator</a><a href="./hash-generator/index.html" class="sidebar-link">🔐 Hash Generator</a><a href="./unix-timestamp/index.html" class="sidebar-link">⏳ Unix Timestamp Converter</a><a href="./color-converter/index.html" class="sidebar-link">🎨 Color Converter</a><a href="./jwt-decoder/index.html" class="sidebar-link">🔑 JWT Decoder</a><a href="./markdown-previewer/index.html" class="sidebar-link">⬇️ Markdown Previewer</a><a href="./csv-to-json/index.html" class="sidebar-link">🔄 CSV to JSON</a><a href="./json-to-csv/index.html" class="sidebar-link">🔄 JSON to CSV</a><a href="./sql-formatter/index.html" class="sidebar-link">🗄️ SQL Formatter</a><a href="./regex-tester/index.html" class="sidebar-link">🔍 Regex Tester</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Text</div><a href="./word-counter/index.html" class="sidebar-link">📊 Word & Character Counter</a><a href="./case-converter/index.html" class="sidebar-link">Aa Case Converter</a><a href="./text-reverser/index.html" class="sidebar-link">🔃 Text Reverser</a><a href="./remove-duplicates/index.html" class="sidebar-link">✂️ Remove Duplicate Lines</a><a href="./sort-lines/index.html" class="sidebar-link">🔢 Sort Lines</a><a href="./text-to-binary/index.html" class="sidebar-link">01 Text to Binary</a><a href="./binary-to-text/index.html" class="sidebar-link">10 Binary to Text</a><a href="./find-replace/index.html" class="sidebar-link">🔎 Find & Replace</a><a href="./whitespace-remover/index.html" class="sidebar-link">🧹 Whitespace Remover</a><a href="./password-generator/index.html" class="sidebar-link">🛡️ Password Generator</a><a href="./prefix-suffix-adder/index.html" class="sidebar-link">➕ Prefix/Suffix Adder</a><a href="./comma-separator/index.html" class="sidebar-link">📑 Comma Separator</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Math</div><a href="./unit-converter/index.html" class="sidebar-link">📏 Unit Converter</a><a href="./base-converter/index.html" class="sidebar-link">🧮 Number Base Converter</a><a href="./percentage-calculator/index.html" class="sidebar-link">% Percentage Calculator</a><a href="./bmi-calculator/index.html" class="sidebar-link">⚖️ BMI Calculator</a><a href="./roman-numerals/index.html" class="sidebar-link">🏛️ Roman Numeral Converter</a><a href="./prime-checker/index.html" class="sidebar-link">✨ Prime Number Checker</a><a href="./color-contrast/index.html" class="sidebar-link">🌗 Color Contrast Checker</a><a href="./gcd-lcm/index.html" class="sidebar-link">➗ GCD/LCM Calculator</a><a href="./random-number/index.html" class="sidebar-link">🎲 Random Number Generator</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Media</div><a href="./image-converter/index.html" class="sidebar-link">🖼️ Image Converter</a><a href="./image-cropper/index.html" class="sidebar-link">✂️ Image Cropper</a><a href="./image-markup/index.html" class="sidebar-link">🖍️ Image Markup</a><a href="./video-extractor/index.html" class="sidebar-link">🎞️ Video Frame Extractor</a><a href="./pdf-info/index.html" class="sidebar-link">📄 PDF Metadata Viewer</a><a href="./qr-generator/index.html" class="sidebar-link">📱 QR Code Generator</a><a href="./image-to-base64/index.html" class="sidebar-link">🔄 Image to Base64</a><a href="./base64-to-image/index.html" class="sidebar-link">🖼️ Base64 to Image</a><a href="./svg-optimizer/index.html" class="sidebar-link">📉 SVG Optimizer</a><a href="./color-extractor/index.html" class="sidebar-link">🎨 Color Extractor</a></div><div class="sidebar-nav-group"><div class="sidebar-nav-title">Misc</div><a href="./ip-info/index.html" class="sidebar-link">🌐 IP Address Info</a><a href="./key-event/index.html" class="sidebar-link">⌨️ Keyboard Event Info</a><a href="./system-info/index.html" class="sidebar-link">💻 System Information</a><a href="./meta-tags/index.html" class="sidebar-link">🏷️ Meta Tag Generator</a><a href="./stopwatch/index.html" class="sidebar-link">⏱️ Stopwatch</a></div>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">All Tools</h1>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
+            </button>
+        </header>
+
+        <main class="content-wrapper">
+            <p style="margin-bottom: 2rem; color: var(--text-muted);">
+                A collection of 50+ tools running entirely in your browser. Fast, private, and secure.
+            </p>
+            <h2 style="margin-bottom: 1rem; margin-top: 2rem; font-size: 1.2rem; font-weight: 600; color: var(--text-main);">Developer</h2><div class="tool-grid">
+                <a href="./base64-encode-decode/index.html" class="tool-card">
+                    <div class="tool-icon">🔤</div>
+                    <div class="tool-title">Base64 Encode/Decode</div>
+                    <div class="tool-desc">Encode and decode text to/from Base64.</div>
+                </a>
+
+                <a href="./url-encode-decode/index.html" class="tool-card">
+                    <div class="tool-icon">🔗</div>
+                    <div class="tool-title">URL Encode/Decode</div>
+                    <div class="tool-desc">Encode and decode URLs safely.</div>
+                </a>
+
+                <a href="./html-encode-decode/index.html" class="tool-card">
+                    <div class="tool-icon">🌐</div>
+                    <div class="tool-title">HTML Entity Encode/Decode</div>
+                    <div class="tool-desc">Encode and decode HTML entities.</div>
+                </a>
+
+                <a href="./json-formatter/index.html" class="tool-card">
+                    <div class="tool-icon">📋</div>
+                    <div class="tool-title">JSON Formatter</div>
+                    <div class="tool-desc">Format and validate JSON data.</div>
+                </a>
+
+                <a href="./json-minifier/index.html" class="tool-card">
+                    <div class="tool-icon">📦</div>
+                    <div class="tool-title">JSON Minifier</div>
+                    <div class="tool-desc">Minify JSON data.</div>
+                </a>
+
+                <a href="./uuid-generator/index.html" class="tool-card">
+                    <div class="tool-icon">🆔</div>
+                    <div class="tool-title">UUID/GUID Generator</div>
+                    <div class="tool-desc">Generate v4 UUIDs/GUIDs.</div>
+                </a>
+
+                <a href="./lorem-ipsum/index.html" class="tool-card">
+                    <div class="tool-icon">📝</div>
+                    <div class="tool-title">Lorem Ipsum Generator</div>
+                    <div class="tool-desc">Generate dummy text for designs.</div>
+                </a>
+
+                <a href="./hash-generator/index.html" class="tool-card">
+                    <div class="tool-icon">🔐</div>
+                    <div class="tool-title">Hash Generator</div>
+                    <div class="tool-desc">Generate MD5, SHA-1, SHA-256 hashes.</div>
+                </a>
+
+                <a href="./unix-timestamp/index.html" class="tool-card">
+                    <div class="tool-icon">⏳</div>
+                    <div class="tool-title">Unix Timestamp Converter</div>
+                    <div class="tool-desc">Convert Unix timestamps to dates and vice versa.</div>
+                </a>
+
+                <a href="./color-converter/index.html" class="tool-card">
+                    <div class="tool-icon">🎨</div>
+                    <div class="tool-title">Color Converter</div>
+                    <div class="tool-desc">Convert colors between HEX, RGB, and HSL.</div>
+                </a>
+
+                <a href="./jwt-decoder/index.html" class="tool-card">
+                    <div class="tool-icon">🔑</div>
+                    <div class="tool-title">JWT Decoder</div>
+                    <div class="tool-desc">Decode JSON Web Tokens.</div>
+                </a>
+
+                <a href="./markdown-previewer/index.html" class="tool-card">
+                    <div class="tool-icon">⬇️</div>
+                    <div class="tool-title">Markdown Previewer</div>
+                    <div class="tool-desc">Preview Markdown text in real-time.</div>
+                </a>
+
+                <a href="./csv-to-json/index.html" class="tool-card">
+                    <div class="tool-icon">🔄</div>
+                    <div class="tool-title">CSV to JSON</div>
+                    <div class="tool-desc">Convert CSV data to JSON.</div>
+                </a>
+
+                <a href="./json-to-csv/index.html" class="tool-card">
+                    <div class="tool-icon">🔄</div>
+                    <div class="tool-title">JSON to CSV</div>
+                    <div class="tool-desc">Convert JSON data to CSV.</div>
+                </a>
+
+                <a href="./sql-formatter/index.html" class="tool-card">
+                    <div class="tool-icon">🗄️</div>
+                    <div class="tool-title">SQL Formatter</div>
+                    <div class="tool-desc">Format SQL queries.</div>
+                </a>
+
+                <a href="./regex-tester/index.html" class="tool-card">
+                    <div class="tool-icon">🔍</div>
+                    <div class="tool-title">Regex Tester</div>
+                    <div class="tool-desc">Test regular expressions.</div>
+                </a>
+                </div><h2 style="margin-bottom: 1rem; margin-top: 2rem; font-size: 1.2rem; font-weight: 600; color: var(--text-main);">Text</h2><div class="tool-grid">
+                <a href="./word-counter/index.html" class="tool-card">
+                    <div class="tool-icon">📊</div>
+                    <div class="tool-title">Word & Character Counter</div>
+                    <div class="tool-desc">Count words, characters, and lines.</div>
+                </a>
+
+                <a href="./case-converter/index.html" class="tool-card">
+                    <div class="tool-icon">Aa</div>
+                    <div class="tool-title">Case Converter</div>
+                    <div class="tool-desc">Convert text to uppercase, lowercase, title case, etc.</div>
+                </a>
+
+                <a href="./text-reverser/index.html" class="tool-card">
+                    <div class="tool-icon">🔃</div>
+                    <div class="tool-title">Text Reverser</div>
+                    <div class="tool-desc">Reverse strings or lines.</div>
+                </a>
+
+                <a href="./remove-duplicates/index.html" class="tool-card">
+                    <div class="tool-icon">✂️</div>
+                    <div class="tool-title">Remove Duplicate Lines</div>
+                    <div class="tool-desc">Remove duplicate lines from text.</div>
+                </a>
+
+                <a href="./sort-lines/index.html" class="tool-card">
+                    <div class="tool-icon">🔢</div>
+                    <div class="tool-title">Sort Lines</div>
+                    <div class="tool-desc">Sort text lines alphabetically or by length.</div>
+                </a>
+
+                <a href="./text-to-binary/index.html" class="tool-card">
+                    <div class="tool-icon">01</div>
+                    <div class="tool-title">Text to Binary</div>
+                    <div class="tool-desc">Convert text to binary.</div>
+                </a>
+
+                <a href="./binary-to-text/index.html" class="tool-card">
+                    <div class="tool-icon">10</div>
+                    <div class="tool-title">Binary to Text</div>
+                    <div class="tool-desc">Convert binary to text.</div>
+                </a>
+
+                <a href="./find-replace/index.html" class="tool-card">
+                    <div class="tool-icon">🔎</div>
+                    <div class="tool-title">Find & Replace</div>
+                    <div class="tool-desc">Find and replace text using strings or regex.</div>
+                </a>
+
+                <a href="./whitespace-remover/index.html" class="tool-card">
+                    <div class="tool-icon">🧹</div>
+                    <div class="tool-title">Whitespace Remover</div>
+                    <div class="tool-desc">Remove extra whitespaces from text.</div>
+                </a>
+
+                <a href="./password-generator/index.html" class="tool-card">
+                    <div class="tool-icon">🛡️</div>
+                    <div class="tool-title">Password Generator</div>
+                    <div class="tool-desc">Generate strong random passwords.</div>
+                </a>
+
+                <a href="./prefix-suffix-adder/index.html" class="tool-card">
+                    <div class="tool-icon">➕</div>
+                    <div class="tool-title">Prefix/Suffix Adder</div>
+                    <div class="tool-desc">Add prefix/suffix to each line.</div>
+                </a>
+
+                <a href="./comma-separator/index.html" class="tool-card">
+                    <div class="tool-icon">📑</div>
+                    <div class="tool-title">Comma Separator</div>
+                    <div class="tool-desc">Convert column of items to comma-separated list.</div>
+                </a>
+                </div><h2 style="margin-bottom: 1rem; margin-top: 2rem; font-size: 1.2rem; font-weight: 600; color: var(--text-main);">Math</h2><div class="tool-grid">
+                <a href="./unit-converter/index.html" class="tool-card">
+                    <div class="tool-icon">📏</div>
+                    <div class="tool-title">Unit Converter</div>
+                    <div class="tool-desc">Convert length, weight, and temperature.</div>
+                </a>
+
+                <a href="./base-converter/index.html" class="tool-card">
+                    <div class="tool-icon">🧮</div>
+                    <div class="tool-title">Number Base Converter</div>
+                    <div class="tool-desc">Convert numbers between hex, dec, oct, bin.</div>
+                </a>
+
+                <a href="./percentage-calculator/index.html" class="tool-card">
+                    <div class="tool-icon">%</div>
+                    <div class="tool-title">Percentage Calculator</div>
+                    <div class="tool-desc">Calculate percentages.</div>
+                </a>
+
+                <a href="./bmi-calculator/index.html" class="tool-card">
+                    <div class="tool-icon">⚖️</div>
+                    <div class="tool-title">BMI Calculator</div>
+                    <div class="tool-desc">Calculate Body Mass Index.</div>
+                </a>
+
+                <a href="./roman-numerals/index.html" class="tool-card">
+                    <div class="tool-icon">🏛️</div>
+                    <div class="tool-title">Roman Numeral Converter</div>
+                    <div class="tool-desc">Convert numbers to/from Roman numerals.</div>
+                </a>
+
+                <a href="./prime-checker/index.html" class="tool-card">
+                    <div class="tool-icon">✨</div>
+                    <div class="tool-title">Prime Number Checker</div>
+                    <div class="tool-desc">Check if a number is prime.</div>
+                </a>
+
+                <a href="./color-contrast/index.html" class="tool-card">
+                    <div class="tool-icon">🌗</div>
+                    <div class="tool-title">Color Contrast Checker</div>
+                    <div class="tool-desc">Check contrast ratio between two colors.</div>
+                </a>
+
+                <a href="./gcd-lcm/index.html" class="tool-card">
+                    <div class="tool-icon">➗</div>
+                    <div class="tool-title">GCD/LCM Calculator</div>
+                    <div class="tool-desc">Find Greatest Common Divisor and Least Common Multiple.</div>
+                </a>
+
+                <a href="./random-number/index.html" class="tool-card">
+                    <div class="tool-icon">🎲</div>
+                    <div class="tool-title">Random Number Generator</div>
+                    <div class="tool-desc">Generate random numbers in a range.</div>
+                </a>
+                </div><h2 style="margin-bottom: 1rem; margin-top: 2rem; font-size: 1.2rem; font-weight: 600; color: var(--text-main);">Media</h2><div class="tool-grid">
+                <a href="./image-converter/index.html" class="tool-card">
+                    <div class="tool-icon">🖼️</div>
+                    <div class="tool-title">Image Converter</div>
+                    <div class="tool-desc">Convert images to PNG, JPG, WebP.</div>
+                </a>
+
+                <a href="./image-cropper/index.html" class="tool-card">
+                    <div class="tool-icon">✂️</div>
+                    <div class="tool-title">Image Cropper</div>
+                    <div class="tool-desc">Crop and resize images.</div>
+                </a>
+
+                <a href="./image-markup/index.html" class="tool-card">
+                    <div class="tool-icon">🖍️</div>
+                    <div class="tool-title">Image Markup</div>
+                    <div class="tool-desc">Draw and add text to images.</div>
+                </a>
+
+                <a href="./video-extractor/index.html" class="tool-card">
+                    <div class="tool-icon">🎞️</div>
+                    <div class="tool-title">Video Frame Extractor</div>
+                    <div class="tool-desc">Extract frames/snapshots from video files.</div>
+                </a>
+
+                <a href="./pdf-info/index.html" class="tool-card">
+                    <div class="tool-icon">📄</div>
+                    <div class="tool-title">PDF Metadata Viewer</div>
+                    <div class="tool-desc">Inspect PDF files metadata securely.</div>
+                </a>
+
+                <a href="./qr-generator/index.html" class="tool-card">
+                    <div class="tool-icon">📱</div>
+                    <div class="tool-title">QR Code Generator</div>
+                    <div class="tool-desc">Generate QR codes from text/URLs.</div>
+                </a>
+
+                <a href="./image-to-base64/index.html" class="tool-card">
+                    <div class="tool-icon">🔄</div>
+                    <div class="tool-title">Image to Base64</div>
+                    <div class="tool-desc">Convert image files to Base64 strings.</div>
+                </a>
+
+                <a href="./base64-to-image/index.html" class="tool-card">
+                    <div class="tool-icon">🖼️</div>
+                    <div class="tool-title">Base64 to Image</div>
+                    <div class="tool-desc">Convert Base64 strings to images.</div>
+                </a>
+
+                <a href="./svg-optimizer/index.html" class="tool-card">
+                    <div class="tool-icon">📉</div>
+                    <div class="tool-title">SVG Optimizer</div>
+                    <div class="tool-desc">Minify SVG code.</div>
+                </a>
+
+                <a href="./color-extractor/index.html" class="tool-card">
+                    <div class="tool-icon">🎨</div>
+                    <div class="tool-title">Color Extractor</div>
+                    <div class="tool-desc">Extract colors from images.</div>
+                </a>
+                </div><h2 style="margin-bottom: 1rem; margin-top: 2rem; font-size: 1.2rem; font-weight: 600; color: var(--text-main);">Misc</h2><div class="tool-grid">
+                <a href="./ip-info/index.html" class="tool-card">
+                    <div class="tool-icon">🌐</div>
+                    <div class="tool-title">IP Address Info</div>
+                    <div class="tool-desc">Get your current IP address and info.</div>
+                </a>
+
+                <a href="./key-event/index.html" class="tool-card">
+                    <div class="tool-icon">⌨️</div>
+                    <div class="tool-title">Keyboard Event Info</div>
+                    <div class="tool-desc">Get JavaScript event keycodes.</div>
+                </a>
+
+                <a href="./system-info/index.html" class="tool-card">
+                    <div class="tool-icon">💻</div>
+                    <div class="tool-title">System Information</div>
+                    <div class="tool-desc">View browser and OS information.</div>
+                </a>
+
+                <a href="./meta-tags/index.html" class="tool-card">
+                    <div class="tool-icon">🏷️</div>
+                    <div class="tool-title">Meta Tag Generator</div>
+                    <div class="tool-desc">Generate HTML meta tags for SEO.</div>
+                </a>
+
+                <a href="./stopwatch/index.html" class="tool-card">
+                    <div class="tool-icon">⏱️</div>
+                    <div class="tool-title">Stopwatch</div>
+                    <div class="tool-desc">Simple online stopwatch.</div>
+                </a>
+                </div>
+        </main>
+    </div>
+
+    <script src="./assets/js/main.js"></script>
+</body>
+</html>

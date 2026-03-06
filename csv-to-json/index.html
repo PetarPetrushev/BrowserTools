@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Markup - BrowserTools</title>
+    <title>CSV to JSON - BrowserTools</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Fabric.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </head>
 <body>
@@ -31,7 +23,7 @@
                 <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
-                <h1 style="font-size: 1.2rem; font-weight: 600;">Image Markup</h1>
+                <h1 style="font-size: 1.2rem; font-weight: 600;">CSV to JSON</h1>
             </div>
             <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
             </button>
@@ -39,9 +31,13 @@
 
         <main class="content-wrapper">
             <div class="card">
-                <p class="text-muted mb-4">Draw and add text to images.</p>
+                <p class="text-muted mb-4">Convert CSV data to JSON.</p>
 
-    <div id="root" style="width: 100%; height: 75vh; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; position: relative;"></div>
+        <textarea id="input" class="input-control" placeholder="id,name\n1,John\n2,Jane"></textarea>
+        <div class="flex gap-2 my-2">
+            <button class="btn btn-primary" id="btnConvert">Convert to JSON</button>
+        </div>
+        <textarea id="output" class="input-control" style="min-height: 200px; font-family: monospace;" readonly></textarea>
 
             </div>
         </main>
@@ -50,7 +46,22 @@
     <script src="../assets/js/main.js"></script>
     <script>
 
+        document.getElementById('btnConvert').onclick = () => {
+            const lines = document.getElementById('input').value.trim().split('\n');
+            if(lines.length < 2) return;
+            const headers = lines[0].split(',');
+            const result = [];
+            for(let i=1; i<lines.length; i++) {
+                const obj = {};
+                const currentline = lines[i].split(',');
+                for(let j=0; j<headers.length; j++){
+                    obj[headers[j]] = currentline[j];
+                }
+                result.push(obj);
+            }
+            document.getElementById('output').value = JSON.stringify(result, null, 2);
+        };
+
     </script>
-<script type="text/babel" src="app.jsx"></script>
 </body>
 </html>
